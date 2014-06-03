@@ -1,5 +1,5 @@
 # AllClasses.R
-# Copyright (C) 2014 Vince Buffalo <vsbuffalo@gmail.com>
+# Copyright (C) 2014 Vince Buffalo <vsbuffaloAAAAA@gmail.com>
 # Distributed under terms of the BSD license.
 
 #' An S4 class that stores links to Tassel HDF5 objects, loci positions, and genotypes
@@ -13,13 +13,13 @@
 #'
 #' @exportClass TasselHDF5
 setClass("TasselHDF5",
-				 slots=list(filename="character",
-										#seqnames="Rle",
-										#positions="Rle",
-										ranges="GRanges",
-										#ref="character",
-										#alt="CharacterList",
-										ref="integer",
-										alt="IntegerList",
-										genotypes="matrix",
-										samples="character"))
+         slots=list(filename="character",
+                    #seqnames="Rle",
+                    #positions="Rle",
+                    ranges="GRanges",
+                    #ref="character",
+                    #alt="CharacterList",
+                    ref="integer",
+                    alt="IntegerList",
+                    genotypes="matrix",
+                    samples="character"))
