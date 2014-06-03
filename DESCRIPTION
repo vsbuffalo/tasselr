@@ -8,7 +8,7 @@ Imports:
     methods,
     rhdf5,
     Rcpp,
-    VariantAnnotation
+    Biobase
 Depends:
     GenomicRanges,
     R (>= 3.1.0)

@@ -67,3 +67,15 @@ setMethod("ref",
             return(TASSELL_ALLELES[x@ref])
           })
 
+
+#' Accessor for samples from a TasselHDF5 object
+#'
+#' @param object a TasselHDF5 object
+#' @export
+setMethod("samples",
+          c(object="TasselHDF5"),
+          function(object) {
+						return(object@samples)
+          })
+
+

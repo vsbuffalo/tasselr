@@ -26,3 +26,4 @@ setGeneric("alt", function(x, as_char=TRUE) {
 setGeneric("ref", function(x, as_char=TRUE) {
            standardGeneric("ref")
              })
+

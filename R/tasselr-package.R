@@ -7,5 +7,6 @@
 #' @import methods
 #' @useDynLib tasselr
 #' @importFrom Rcpp sourceCpp
+#' @importMethodsFrom Biobase samples
 NULL
 
