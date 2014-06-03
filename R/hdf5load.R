@@ -1,4 +1,4 @@
-# hdf5load.R --
+# hdf5load.R -- Functions for loading data in and out of Tassel HDF5 files
 # Copyright (C) 2014 Vince Buffalo <vsbuffaloAAAAA@gmail.com>
 # Distributed under terms of the BSD license.
 
@@ -14,8 +14,20 @@ getAltAlleles <- function(x) {
          })
 }
 
+extractAlleleFreqOrder <- function(file) {
+	# Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6 matrix. The first
+	# column are all ref alleles, and the other columns are all alternate alleles
+	# (0xF if not present). This works because there can be at most 6 alleles.
+	h5read(file,"/SiteDesc/AlleleFreqOrder")
+}
+
+#' Initialize a TasselHDF5 object, connected to an HDF5 file
+#'
+#' @param file a path to an HDF5 file
+#'
 #' @export
 initTasselHDF5 <- function(file) {
+  file <- path.expand(file)
   seqlevels <- h5read(file, "/SeqRegion")
   tmp <- h5read(file, "/SeqRegionIndices")
   snpnames <- as.character(h5read(file, "/SnpIds"))
@@ -35,6 +47,12 @@ initTasselHDF5 <- function(file) {
   return(obj)
 }
 
+
+#' Load and decode biallelic genotypes from HDF5 file
+#'
+#' @param x a TasselHDF5 object
+#' @param verbose a logical describing whether to be verbose during loading
+#'
 #' @export
 setMethod("loadBiallelicGenotypes",
           c(x="TasselHDF5"),
@@ -50,43 +68,27 @@ setMethod("loadBiallelicGenotypes",
             vmessage("coercing to matrix... ")
             gmat <- do.call(cbind, glist)
             vmessage("done.\n")
-            vmessage("coercing 0xFF to NA_integer_... ")
-            gmat[gmat == -1L] <- NA_integer_
-            vmessage("done.\n")
+						# note: replacing -1L with NA now done in C++
+            #vmessage("coercing 0xFF to NA_integer_... ")
+            #gmat[gmat == -1L] <- NA_integer_
+            #vmessage("done.\n")
             # filter, keeping biallelic only
+            vmessage("filtering biallelic loci... ")
             i <- which(elementLengths(x@alt) == 1)
             x@ranges <- x@ranges[i]
             x@ref <- x@ref[i]
             x@alt <- x@alt[i]
-            x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, unlist(x@alt))
+            stopifnot(length(x@ref) == length(unlist(x@alt)))
+            stopifnot(length(x@ranges) == length(x@ref))
+            stopifnot(length(i) == length(x@alt))
+            vmessage("done.\n")
+            vmessage("encoding genotypes... ")
+						alt <- as(x@alt, "integer")
+						stopifnot(is(alt, "integer"))
+            x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, alt)
+            vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
             colnames(x@genotypes) <- x@samples
             return(x)
-          })
-
-#' @export
-setMethod("show",
-          c(object="TasselHDF5"),
-          function(object) {
-            cat(sprintf("Tassel HDF5 object at '%s'\n%d loci x %d samples\n",
-                        object@filename,
-                        length(object@ranges), length(object@samples)))
-            cat(sprintf("Number of chromosomes: %d\nObject size: %s Mb\n",
-                        length(seqlevels(object@ranges)),
-                        round(object.size(object)/1024^2, 3)))
-          })
-
-#' @export
-setMethod("geno",
-          c(x="TasselHDF5"),
-          function(x) {
-            return(x@genotypes)
-          })
-
-#' @export
-setMethod("granges",
-          c(x="TasselHDF5"),
-          function(x, use.mcols=FALSE, ...) {
-            return(x@ranges)
           })
 

@@ -1,21 +1,28 @@
-# AllGenerics.R -- 
+# AllGenerics.R --
 # Copyright (C) 2014 Vince Buffalo <vsbuffaloAAAAA@gmail.com>
 # Distributed under terms of the BSD license.
 
-#' Extract genotype information from a TasselHDF5 object
-#'
-#' @export
-setGeneric("geno", function(x) {
-           standardGeneric("geno")
-             })
 
-#' Load and decode biallelic genotypes from HDF5 file
+#' Load biallelic genotype information
 #'
-#' @param x a TasselHDF5 object
-#' @param verbose a logical describing whether to be verbose during loading
-#' @export
 setGeneric("loadBiallelicGenotypes", function(x, verbose=TRUE) {
            standardGeneric("loadBiallelicGenotypes")
              })
 
+#' Accessor for genotype matrix
+#'
+setGeneric("geno", function(x) {
+           standardGeneric("geno")
+             })
 
+#' Accessor for alternate alleles
+#'
+setGeneric("alt", function(x, as_char=TRUE) {
+           standardGeneric("alt")
+             })
+
+#' Accessor for reference alleles
+#'
+setGeneric("ref", function(x, as_char=TRUE) {
+           standardGeneric("ref")
+             })

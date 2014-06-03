@@ -7,7 +7,8 @@ Description: A few S4 methods for loading and manipulating HDF5 files from
 Imports:
     methods,
     rhdf5,
-    Rcpp
+    Rcpp,
+    VariantAnnotation
 Depends:
     GenomicRanges,
     R (>= 3.1.0)
