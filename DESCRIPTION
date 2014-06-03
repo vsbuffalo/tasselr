@@ -1,0 +1,16 @@
+Package: tasselr
+Title: S4 methods for working with HDF5 files from TASSEL
+Version: 0.1
+Authors@R: 'Vince Buffalo <vsbuffaloAAAAA@gmail.com> [aut, cre]'
+Description: A few S4 methods for loading and manipulating HDF5 files from
+    TASSEL
+Imports:
+    methods,
+    rhdf5,
+    Rcpp
+Depends:
+    GenomicRanges,
+    R (>= 3.1.0)
+LinkingTo: Rcpp
+License: BSD
+LazyData: true
