@@ -5,6 +5,25 @@ outputs HDF5 files full of GBS genotyping data. This package is an R interface
 to a subset of the information in these files, so users can quickly load and
 work with these data.
 
+## Required Packages
+
+From CRAN:
+
+ - methods
+ - Rcpp
+
+From [Bioconductor](http://bioconductor.org):
+
+ - GenomicRanges
+ - Biobase
+ - rhdf5
+
+Install these packages, then using
+[devtools](https://github.com/hadley/devtools) (which you can install via
+CRAN), do:
+
+    install_github("vsbuffalo/tasselr")
+
 ## Loading Tassel HDF5 GBS into R
 
 First, we initialize the HDF5 file with `initTasselHDF5`. `initTasselHDF5.Rd`
