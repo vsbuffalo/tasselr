@@ -5,7 +5,7 @@ outputs HDF5 files full of GBS genotyping data. This package is an R interface
 to a subset of the information in these files, so users can quickly load and
 work with these data.
 
-## Loading Data into Tassel
+## Loading Tassel HDF5 GBS into R
 
 First, we initialize the HDF5 file with `initTasselHDF5`. `initTasselHDF5.Rd`
 loads in the loci positions as a `GRanges` object, and stores reference and
