@@ -2,11 +2,11 @@
 #'
 #' @name tasselr
 #' @docType package
-#' @importFrom IRanges IntegerList
+#' @importFrom IRanges IntegerList CharacterList
 #' @import rhdf5
 #' @import methods
 #' @useDynLib tasselr
 #' @importFrom Rcpp sourceCpp
-#' @importMethodsFrom Biobase samples
+#' @importFrom Biobase samples
 NULL
 
