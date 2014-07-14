@@ -5,6 +5,11 @@
 \usage{
 loadBiallelicGenotypes(x, verbose = TRUE)
 }
+\arguments{
+\item{x}{a TasselHDF5 object}
+
+\item{verbose}{logical indicating whether to print status mesages during loading}
+}
 \description{
 Load biallelic genotype information
 }

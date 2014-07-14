@@ -5,6 +5,7 @@ Authors@R: 'Vince Buffalo <vsbuffaloAAAAA@gmail.com> [aut, cre]'
 Description: A few S4 methods for loading and manipulating HDF5 files from
     TASSEL
 Imports:
+    IRanges,
     methods,
     rhdf5,
     Rcpp,

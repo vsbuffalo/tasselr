@@ -5,6 +5,12 @@
 \usage{
 ref(x, as_char = TRUE)
 }
+\arguments{
+\item{x}{a TasselHDF5 object}
+
+\item{as_char}{logical indicating whether to return as character
+or as Tassel encodes them, as integer}
+}
 \description{
 Accessor for reference alleles
 }

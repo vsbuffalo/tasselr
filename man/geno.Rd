@@ -5,6 +5,9 @@
 \usage{
 geno(x)
 }
+\arguments{
+\item{x}{a TasselHDF5 object}
+}
 \description{
 Accessor for genotype matrix
 }

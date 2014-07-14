@@ -5,6 +5,12 @@
 \usage{
 alt(x, as_char = TRUE)
 }
+\arguments{
+\item{x}{a TasselHDF5 object}
+
+\item{as_char}{logical indicating whether to return as \code{CharacterList}
+or as Tassel encodes them, as an \code{IntegerList}}
+}
 \description{
 Accessor for alternate alleles
 }
