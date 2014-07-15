@@ -1,4 +1,6 @@
-# tasselr -- Load HDF5 GBS files from Tassel into R
+# tasselr
+
+[![Build Status](https://travis-ci.org/vsbuffalo/tasselr.svg?branch=master)](https://travis-ci.org/vsbuffalo/tasselr)
 
 [Tassel](http://www.maizegenetics.net/index.php?option=com_content&task=view&id=89&Itemid=119)
 outputs HDF5 files full of GBS genotyping data. This package is an R interface
