@@ -68,7 +68,7 @@ setMethod("loadBiallelicGenotypes",
             vmessage("coercing to matrix... ")
             gmat <- do.call(cbind, glist)
             vmessage("done.\n")
-						# note: replacing -1L with NA now done in C++
+            # note: replacing -1L with NA now done in C++
             #vmessage("coercing 0xFF to NA_integer_... ")
             #gmat[gmat == -1L] <- NA_integer_
             #vmessage("done.\n")
@@ -83,8 +83,9 @@ setMethod("loadBiallelicGenotypes",
             stopifnot(length(i) == length(x@alt))
             vmessage("done.\n")
             vmessage("encoding genotypes... ")
-						alt <- as(x@alt, "integer")
-						stopifnot(is(alt, "integer"))
+            alt <- as(x@alt, "integer")
+            stopifnot(is(alt, "integer"))
+            browser()
             x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, alt)
             vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
