@@ -2,6 +2,18 @@
 # Copyright (C) 2014 Vince Buffalo <vsbuffaloAAAAA@gmail.com>
 # Distributed under terms of the BSD license.
 
+schema <- list("4"=list(seqnames="/SeqRegion", indices="/SeqRegionIndices",
+                        snpnames="/SnpIds", positions="/Positions",
+                        genotypes="/Genotypes",
+                        taxa="/Taxa"),
+               "5"=list(seqnames="/Positions/Chromosomes",
+                        indices="/Positions/ChromosomeIndices",
+                        snpnames="/Positions/SnpIds",
+                        positions="/Positions/Positions",
+                        genotypes="/Genotypes",
+                        taxa="/Taxa"))
+
+
 getRefAlleles <- function(x) {
   # x is a AlleleFreqOrder matrix
   return(ifelse(x[, 1] == -1L, NA, x[, 1]))
@@ -18,7 +30,7 @@ extractAlleleFreqOrder <- function(file) {
 	# Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6 matrix. The first
 	# column are all ref alleles, and the other columns are all alternate alleles
 	# (0xF if not present). This works because there can be at most 6 alleles.
-	h5read(file,"/SiteDesc/AlleleFreqOrder")
+	h5read(file,"/Genotypes/_Descriptors/AlleleFreqOrder")
 }
 
 #' Initialize a TasselHDF5 object, connected to an HDF5 file
@@ -26,14 +38,18 @@ extractAlleleFreqOrder <- function(file) {
 #' @param file a path to an HDF5 file
 #'
 #' @export
-initTasselHDF5 <- function(file) {
+initTasselHDF5 <- function(file, version="5") {
+  schm <- schema[[version]]
   file <- path.expand(file)
-  seqlevels <- h5read(file, "/SeqRegion")
-  tmp <- h5read(file, "/SeqRegionIndices")
-  snpnames <- as.character(h5read(file, "/SnpIds"))
+  seqlevels <- h5read(file, schm$seqnames)
+  tmp <- h5read(file, schm$indices)
+  snpnames <- as.character(h5read(file, schm$snpnames))
   seqnames <- factor(seqlevels[tmp+1L], levels=seqlevels)
-  positions <- h5read(file, "/Positions")
-  samples <- names(h5read(file, "/Genotypes", count=1))
+  positions <- h5read(file, schm$positions)
+  if (version == "5")
+      samples <- names(h5read(file, schm$taxa, count=1))
+  if (version == "4")
+      samples <- names(h5read(file, schm$genotypes, count=1))
   allele_mat <- extractAlleleFreqOrder(file)
   ref <- getRefAlleles(allele_mat)
   alt <- as(getAltAlleles(allele_mat), "IntegerList")
@@ -43,7 +59,7 @@ initTasselHDF5 <- function(file) {
              #seqnames=seqnames, positions=positions,
              ranges=ranges,
              ref=ref, alt=alt,
-             samples=samples)
+             samples=samples, version=version)
   return(obj)
 }
 
@@ -61,9 +77,14 @@ setMethod("loadBiallelicGenotypes",
               if (verbose)
                 message(x, appendLF=FALSE)
             }
+            schm <- schema[[x@version]]
             vmessage(sprintf("loading in genotypes from HDF5 file '%s'... ",
                              basename(x@filename)))
-            glist <- h5read(x@filename, "/Genotypes")
+            # Seems Tassel5 objects are packed different:
+            if (version == "5")
+                glist <- lapply(h5read(x@filename, schm$genotypes), '[[', 1)
+            if (version == "4")
+                glist <- h5read(x@filename, schm$genotypes)
             vmessage("done.\n")
             vmessage("coercing to matrix... ")
             gmat <- do.call(cbind, glist)
@@ -91,4 +112,6 @@ setMethod("loadBiallelicGenotypes",
             colnames(x@genotypes) <- x@samples
             return(x)
           })
+
+
 

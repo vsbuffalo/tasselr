@@ -10,6 +10,7 @@
 #' @slot alt a Tassel-encoded \code{IntegerList} of alternate alleles
 #' @slot genotypes a matrix of bialleic genotypes
 #' @slot samples sample names
+#' @slot version string Tassel version
 #'
 #' @exportClass TasselHDF5
 setClass("TasselHDF5",
@@ -22,4 +23,5 @@ setClass("TasselHDF5",
                     ref="integer",
                     alt="IntegerList",
                     genotypes="matrix",
-                    samples="character"))
+                    samples="character",
+                    version="character"))
