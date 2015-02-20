@@ -4,13 +4,13 @@
 
 schema <- list("4"=list(seqnames="/SeqRegion", indices="/SeqRegionIndices",
                         snpnames="/SnpIds", positions="/Positions",
-                        genotypes="/Genotypes",
-                        taxa="/Taxa"),
+                        genotypes="/Genotypes"),
                "5"=list(seqnames="/Positions/Chromosomes",
                         indices="/Positions/ChromosomeIndices",
                         snpnames="/Positions/SnpIds",
                         positions="/Positions/Positions",
                         genotypes="/Genotypes",
+                        taxa_order="/Taxa/TaxaOrder",
                         taxa="/Taxa"))
 
 
@@ -47,7 +47,7 @@ initTasselHDF5 <- function(file, version="5") {
   seqnames <- factor(seqlevels[tmp+1L], levels=seqlevels)
   positions <- h5read(file, schm$positions)
   if (version == "5")
-      samples <- names(h5read(file, schm$taxa, count=1))
+      samples <- as.character(h5read(file, schm$taxa_order))
   if (version == "4")
       samples <- names(h5read(file, schm$genotypes, count=1))
   allele_mat <- extractAlleleFreqOrder(file)
@@ -80,14 +80,13 @@ setMethod("loadBiallelicGenotypes",
             schm <- schema[[x@version]]
             vmessage(sprintf("loading in genotypes from HDF5 file '%s'... ",
                              basename(x@filename)))
-            # Seems Tassel5 objects are packed different:
-            if (version == "5")
-                glist <- lapply(h5read(x@filename, schm$genotypes), '[[', 1)
-            if (version == "4")
-                glist <- h5read(x@filename, schm$genotypes)
+            glist <- lapply(h5read(x@filename, schm$genotypes),
+                            function(x) as.integer(x[[1]]))
+            glist <- glist[x@samples]
             vmessage("done.\n")
-            vmessage("coercing to matrix... ")
-            gmat <- do.call(cbind, glist)
+            vmessage("binding samples together into matrix... ")
+            #gmat <- do.call(data.frame, glist) # dataframe avoids R mem issues
+            gmat <- bindGenotypeList(glist)
             vmessage("done.\n")
             # note: replacing -1L with NA now done in C++
             #vmessage("coercing 0xFF to NA_integer_... ")
