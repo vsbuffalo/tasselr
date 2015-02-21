@@ -3,15 +3,22 @@
 # Distributed under terms of the BSD license.
 
 schema <- list("4"=list(seqnames="/SeqRegion", indices="/SeqRegionIndices",
-                        snpnames="/SnpIds", positions="/Positions",
-                        genotypes="/Genotypes"),
+                   snpnames="/SnpIds", positions="/Positions",
+                   allele_freq_order="/SiteDesc/AlleleFreqOrder", 
+                   genotypes="/Genotypes"),
                "5"=list(seqnames="/Positions/Chromosomes",
-                        indices="/Positions/ChromosomeIndices",
-                        snpnames="/Positions/SnpIds",
-                        positions="/Positions/Positions",
-                        genotypes="/Genotypes",
-                        taxa_order="/Taxa/TaxaOrder",
-                        taxa="/Taxa"))
+                   indices="/Positions/ChromosomeIndices",
+                   snpnames="/Positions/SnpIds",
+                   positions="/Positions/Positions",
+                   genotypes="/Genotypes",
+                   taxa_order="/Taxa/TaxaOrder",
+                   allele_freq_order="/Genotypes/_Descriptors/AlleleFreqOrder",
+                   # Note: Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6
+                   # matrix. The first column are all ref alleles, and the other
+                   # columns are all alternate alleles (0xF if not
+                   # present). This works because there can be at most 6
+                   # alleles.
+                   taxa="/Taxa"))
 
 
 getRefAlleles <- function(x) {
@@ -24,13 +31,6 @@ getAltAlleles <- function(x) {
   lapply(split(x[, -1], seq_len(nrow(x))), function(alts) {
          alts[alts != 0xFL]
          })
-}
-
-extractAlleleFreqOrder <- function(file) {
-	# Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6 matrix. The first
-	# column are all ref alleles, and the other columns are all alternate alleles
-	# (0xF if not present). This works because there can be at most 6 alleles.
-	h5read(file,"/Genotypes/_Descriptors/AlleleFreqOrder")
 }
 
 #' Initialize a TasselHDF5 object, connected to an HDF5 file
@@ -50,7 +50,7 @@ initTasselHDF5 <- function(file, version="5") {
       samples <- as.character(h5read(file, schm$taxa_order))
   if (version == "4")
       samples <- names(h5read(file, schm$genotypes, count=1))
-  allele_mat <- extractAlleleFreqOrder(file)
+  allele_mat <- h5read(file, schm$allele_freq_order)
   ref <- getRefAlleles(allele_mat)
   alt <- as(getAltAlleles(allele_mat), "IntegerList")
   ranges <- setNames(GRanges(seqnames, IRanges(start=positions, width=1)),
@@ -80,8 +80,11 @@ setMethod("loadBiallelicGenotypes",
             schm <- schema[[x@version]]
             vmessage(sprintf("loading in genotypes from HDF5 file '%s'... ",
                              basename(x@filename)))
-            glist <- bindGenotypeList(lapply(h5read(x@filename, schm$genotypes),
-                            function(x) as.integer(x[[1]]))[x@samples])
+            gmat <- bindGenotypeList(lapply(h5read(x@filename, schm$genotypes),
+                            function(x) {
+                                x <- if (!is.list(x)) x else unlist(x)
+                                as.integer(x[[1]])
+                                         })[x@samples])
             vmessage("done.\n")
             #vmessage("binding samples together into matrix... ")
             #gmat <- do.call(data.frame, glist) # dataframe avoids R mem issues
@@ -104,6 +107,7 @@ setMethod("loadBiallelicGenotypes",
             vmessage("encoding genotypes... ")
             alt <- as(x@alt, "integer")
             stopifnot(is(alt, "integer"))
+            browser()
             x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, alt)
             vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
