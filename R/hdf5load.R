@@ -20,6 +20,22 @@ schema <- list("4"=list(seqnames="/SeqRegion", indices="/SeqRegionIndices",
                    # alleles.
                    taxa="/Taxa"))
 
+getLoadGenotypeFun <- function(version) {
+  schm <- schema[[version]]
+  loadGenotypesFuns <- setNames(list( # separate sep names step since number names
+  v4=function(x) {
+      h5read(x@filename, schm$genotypes)
+  },
+  v5=function(x) {
+      lapply(x@samples, function(sn) {
+          # it's best to load in each sample individually in Tassel5's layout
+          dt <- paste(schm$genotypes, sn, "calls", sep="/")
+          h5read(x@filename, dt)
+      })
+  }), c('4', '5'))
+  loadGenotypesFuns[[version]]
+}
+
 
 getRefAlleles <- function(x) {
   # x is a AlleleFreqOrder matrix
@@ -80,15 +96,12 @@ setMethod("loadBiallelicGenotypes",
             schm <- schema[[x@version]]
             vmessage(sprintf("loading in genotypes from HDF5 file '%s'... ",
                              basename(x@filename)))
-            gmat <- bindGenotypeList(lapply(h5read(x@filename, schm$genotypes),
-                            function(x) {
-                                x <- if (!is.list(x)) x else unlist(x)
-                                as.integer(x[[1]])
-                                         })[x@samples])
+            loadFun <- getLoadGenotypeFun(x@version) # get this version's load func
+            glist <- loadFun(x)
             vmessage("done.\n")
-            #vmessage("binding samples together into matrix... ")
+            vmessage("binding samples together into matrix... ")
             #gmat <- do.call(data.frame, glist) # dataframe avoids R mem issues
-            #gmat <- bindGenotypeList(glist)
+            gmat <- bindGenotypeList(glist)
             #vmessage("done.\n")
             # note: replacing -1L with NA now done in C++
             #vmessage("coercing 0xFF to NA_integer_... ")
@@ -107,7 +120,6 @@ setMethod("loadBiallelicGenotypes",
             vmessage("encoding genotypes... ")
             alt <- as(x@alt, "integer")
             stopifnot(is(alt, "integer"))
-            browser()
             x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, alt)
             vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
