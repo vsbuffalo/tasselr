@@ -1,6 +1,6 @@
 Package: tasselr
 Title: S4 methods for working with HDF5 files from TASSEL
-Version: 0.1
+Version: 0.2
 Authors@R: 'Vince Buffalo <vsbuffaloAAAAA@gmail.com> [aut, cre]'
 Description: A few S4 methods for loading and manipulating HDF5 files from
     TASSEL
