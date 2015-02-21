@@ -28,10 +28,11 @@ CRAN), do:
 
 ## Loading Tassel HDF5 GBS into R
 
-First, we initialize the HDF5 file with `initTasselHDF5`. `initTasselHDF5.Rd`
-loads in the loci positions as a `GRanges` object, and stores reference and
-alternate alleles (which you can access with the `ref` and `alt` accessor
-functions, respectively):
+First, we initialize the HDF5 file with `initTasselHDF5`. By default,
+`initTasselHDF5()` assumes the HDF5 file *is in Tassel5's schema*; set the
+`version='4'` to change this. `initTasselHDF5()` loads in the loci positions
+as a `GRanges` object, and stores reference and alternate alleles (which you
+can access with the `ref` and `alt` accessor functions, respectively):
 
     > gbs <- initTasselHDF5("path/to/mygbs.h5")
     > gbs
@@ -40,35 +41,24 @@ functions, respectively):
 		Number of chromosomes: 11
 		Object size: 127.022 Mb
 
-    > alt(gbs)
-    CharacterList of length 955690
-    [["1"]] character(0)
-    [["2"]] character(0)
-    [["3"]] G
-    [["4"]] character(0)
-    [["5"]] A
-    [["6"]] C
-    [["7"]] character(0)
-    [["8"]] G
-    [["9"]] character(0)
-    [["10"]] character(0)
-    ...
-    <955680 more elements>
+    > head(alt(teo), 20)
+      3   4   5   6   8  11  13  14  15  17  18
+     "T" "A" "C" "G" "T" "C" "T" "T" "G" "G" "T"   [...]
 
-    > head(ref(teo))
+    > head(ref(gbs))
     [1] "C" "C" "C" "C" "C" "A"
 
 ## Loading Genotypes
 
 Genotypes are loaded and decoded into the number of alternate alleles they have
-(0, 1, 2) for biallelic loci by the method `loadBiallelicGenotypes`:
+(0, 1, 2) for biallelic loci by the method `loadBiallelicGenotypes()`:
 
     > gbs <- loadBiallelicGenotypes(gbs)
 
 The conversion methods are written in C++ with [Rcpp](http://www.rcpp.org/) so
 they're fast-ish.
 
-The accessor function `geno` can be used to extract this genotype matrix. Note
+The accessor function `geno()` can be used to extract this genotype matrix. Note
 that the number of loci, and the reference and alternate alleles will change,
 as only biallelic loci are kept. The object will always have internal
 consistency, and you should always use accessor functions to access data in
@@ -83,9 +73,9 @@ Accessor functions:
 
 ## Warnings
 
- - This is tied to Tassel's HDF5 formats. If these change, there are no
-   guarantees the data loaded in will be correct (sorry). Always run a sanity
-	 checks!
+ - This is tied to Tassel's HDF5 formats (Tassel 4 and 5 only). If these
+   change, there are no guarantees the data loaded in will be correct (sorry).
+   Always run a sanity checks!
 
 ## Todo
 
