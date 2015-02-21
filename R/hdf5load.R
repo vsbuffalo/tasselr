@@ -101,7 +101,8 @@ setMethod("loadBiallelicGenotypes",
             vmessage("done.\n")
             vmessage("binding samples together into matrix... ")
             #gmat <- do.call(data.frame, glist) # dataframe avoids R mem issues
-            gmat <- bindGenotypeList(glist)
+            gmat <- do.call(cbind, glist)
+            #gmat <- bindGenotypeList(glist)
             #vmessage("done.\n")
             # note: replacing -1L with NA now done in C++
             #vmessage("coercing 0xFF to NA_integer_... ")
@@ -109,7 +110,12 @@ setMethod("loadBiallelicGenotypes",
             #vmessage("done.\n")
             # filter, keeping biallelic only
             vmessage("filtering biallelic loci... ")
-            i <- which(elementLengths(x@alt) == 1)
+            elens <- elementLengths(x@alt) 
+            i <- which(elens == 1)
+            nremoved <- sum(elens != 1)
+            if (nremoved > 0)
+                warning(sprintf("Removed %d loci non-biallelic."))
+            gmat <- gmat[i, ]
             x@ranges <- x@ranges[i]
             x@ref <- x@ref[i]
             x@alt <- x@alt[i]
@@ -120,10 +126,11 @@ setMethod("loadBiallelicGenotypes",
             vmessage("encoding genotypes... ")
             alt <- as(x@alt, "integer")
             stopifnot(is(alt, "integer"))
-            x@genotypes <- encodeNumAltAlleles(gmat[i, ], x@ref, alt)
+            x@genotypes <- encodeNumAltAlleles(gmat, x@ref, alt)
             vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
             colnames(x@genotypes) <- x@samples
+            gc() # collecting garbage frees mem (a lot since these objs are large)
             return(x)
           })
 

@@ -13,6 +13,6 @@
 # Each of these has a position in a vector with length 16. Since R is
 # 1-indexed, the appoprtiate allele is the bit value in decimal - 1.
 TASSELL_ALLELES <- c("A", "C", "G", "T", "+", "-", NA, NA,
-										 NA, NA, NA, NA, NA, NA, NA, "N")
+                     NA, NA, NA, NA, NA, NA, NA, "N")
 
 

@@ -49,8 +49,8 @@ setMethod("alt",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@alt)
-            out <- lapply(x@alt, function(x) TASSELL_ALLELES[x])
-            return(as(out, "CharacterList"))
+            out <- sapply(x@alt, function(x) TASSELL_ALLELES[x+1L])
+            out
           })
 
 #' Accessor for reference alleles from a TasselHDF5 object
@@ -75,7 +75,18 @@ setMethod("ref",
 setMethod("samples",
           c(object="TasselHDF5"),
           function(object) {
-						return(object@samples)
+              return(object@samples)
           })
+
+
+
+
+
+
+
+
+
+
+
 
 
