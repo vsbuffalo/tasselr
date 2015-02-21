@@ -102,6 +102,7 @@ setMethod("loadBiallelicGenotypes",
             vmessage("binding samples together into matrix... ")
             #gmat <- do.call(data.frame, glist) # dataframe avoids R mem issues
             gmat <- do.call(cbind, glist)
+            rm(glist); gc() # these are big objects...
             #gmat <- bindGenotypeList(glist)
             #vmessage("done.\n")
             # note: replacing -1L with NA now done in C++
@@ -114,7 +115,7 @@ setMethod("loadBiallelicGenotypes",
             i <- which(elens == 1)
             nremoved <- sum(elens != 1)
             if (nremoved > 0)
-                warning(sprintf("Removed %d loci non-biallelic."))
+                warning(sprintf("Removed %d loci non-biallelic.", nremoved))
             gmat <- gmat[i, ]
             x@ranges <- x@ranges[i]
             x@ref <- x@ref[i]
