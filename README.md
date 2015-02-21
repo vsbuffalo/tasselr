@@ -41,7 +41,7 @@ can access with the `ref` and `alt` accessor functions, respectively):
 		Number of chromosomes: 11
 		Object size: 127.022 Mb
 
-    > head(alt(teo), 20)
+    > head(alt(gbs), 20)
       3   4   5   6   8  11  13  14  15  17  18
      "T" "A" "C" "G" "T" "C" "T" "T" "G" "G" "T"   [...]
 
@@ -66,10 +66,10 @@ slots.
 
 Accessor functions:
 
- - `granges`: for loci positions.
- - `alt`: for alternate alleles.
- - `ref`: for reference alleles.
- - `geno`: for genotype matrix.
+ - `granges()`: for loci positions.
+ - `alt()`: for alternate alleles.
+ - `ref()`: for reference alleles.
+ - `geno()`: for genotype matrix.
 
 ## Warnings
 
