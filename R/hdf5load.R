@@ -56,11 +56,13 @@ getAltAlleles <- function(x) {
 #' @export
 initTasselHDF5 <- function(file, version="5") {
   schm <- schema[[version]]
+  if (is.null(schm)) stop(sprintf("Did not find schema for version '%s'", version))
   file <- path.expand(file)
-  seqlevels <- h5read(file, schm$seqnames)
+  msg <- "could not read /Positions/Chromosomes; did you mean to use version='4'?"
+  tryCatch(seqnames <- h5read(file, schm$seqnames), error=function(e) stop(paste(msg, e, sep="\n")))
   tmp <- h5read(file, schm$indices)
   snpnames <- as.character(h5read(file, schm$snpnames))
-  seqnames <- factor(seqlevels[tmp+1L], levels=seqlevels)
+  seqnames <- factor(seqnames[tmp+1L], levels=seqnames)
   positions <- h5read(file, schm$positions)
   if (version == "5")
       samples <- as.character(h5read(file, schm$taxa_order))
