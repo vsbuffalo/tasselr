@@ -112,6 +112,7 @@ setMethod("loadBiallelicGenotypes",
             #gmat[gmat == -1L] <- NA_integer_
             #vmessage("done.\n")
             # filter, keeping biallelic only
+            vmessage("done.\n")
             vmessage("filtering biallelic loci... ")
             elens <- elementLengths(x@alt) 
             i <- which(elens == 1)
