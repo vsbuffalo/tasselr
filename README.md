@@ -92,7 +92,11 @@ Accessor functions:
 
 ## Dev Notes
 
-Initially I used R to find and convert missing values 0xFF values into NAs.
+ - Initially I used R to find and convert missing values 0xFF values into NAs.
 This took 261.093 seconds (261.093 user, 129.891 system, 454.579 elapsed). Now
 this is done in C++ and it takes about 189.709 seconds (189.709 user, 59.941
 system, 290.936 elapsed).
+
+ - Initially I used Rcpp to encode genotypes from tasselr. However, Rcpp's
+   `IntegerMatrix` doesn't support matrices that are larger than 2^31 - 1
+elements. To remedy this, I wrote everything in C and used a `do.call()`.
