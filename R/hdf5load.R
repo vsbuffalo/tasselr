@@ -130,7 +130,9 @@ setMethod("loadBiallelicGenotypes",
             vmessage("encoding genotypes... ")
             alt <- as(x@alt, "integer")
             stopifnot(is(alt, "integer"))
-            x@genotypes <- encodeNumAltAlleles(gmat, x@ref, alt)
+            #x@genotypes <- encodeNumAltAlleles(gmat, x@ref, alt)
+            x@genotypes <- .Call("encodeNumAltAlleles2", nrow(gmat), ncol(gmat),
+                                 gmat, x@ref, alt)
             vmessage("done.\n")
             rownames(x@genotypes) <- names(x@ranges)
             colnames(x@genotypes) <- x@samples

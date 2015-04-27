@@ -64,13 +64,16 @@ setMethod("ref",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@ref)
-            return(TASSELL_ALLELES[x@ref])
+            out <- sapply(x@ref, function(x) TASSELL_ALLELES[x+1L])
+            return(out)
           })
 
 
 #' Accessor for samples from a TasselHDF5 object
 #'
 #' @param object a TasselHDF5 object
+#'
+#' @importMethodsFrom Biobase samples
 #' @export
 setMethod("samples",
           c(object="TasselHDF5"),
