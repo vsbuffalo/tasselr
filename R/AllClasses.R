@@ -9,6 +9,7 @@
 #' @slot ref a Tassel-encoded integer vector of reference alleles
 #' @slot alt a Tassel-encoded \code{IntegerList} of alternate alleles
 #' @slot genotypes a matrix of bialleic genotypes
+#' @slot allele_states character vector of allele states
 #' @slot samples sample names
 #' @slot version string Tassel version
 #'
@@ -22,6 +23,7 @@ setClass("TasselHDF5",
                     #alt="CharacterList",
                     ref="integer",
                     alt="IntegerList",
+                    allele_states="character",
                     genotypes="matrix",
                     samples="character",
                     version="character"))

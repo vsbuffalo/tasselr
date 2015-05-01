@@ -20,6 +20,8 @@ An S4 class that stores links to Tassel HDF5 objects, loci positions, and genoty
 
 \item{\code{genotypes}}{a matrix of bialleic genotypes}
 
+\item{\code{allele_states}}{character vector of allele states}
+
 \item{\code{samples}}{sample names}
 
 \item{\code{version}}{string Tassel version}

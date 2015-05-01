@@ -49,7 +49,7 @@ setMethod("alt",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@alt)
-            out <- sapply(x@alt, function(x) TASSELL_ALLELES[x+1L])
+            out <- sapply(x@alt, function(a) x@allele_states[a+1L])
             out
           })
 
@@ -64,7 +64,7 @@ setMethod("ref",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@ref)
-            out <- sapply(x@ref, function(x) TASSELL_ALLELES[x+1L])
+            out <- sapply(x@ref, function(a) x@allele_states[a+1L])
             return(out)
           })
 

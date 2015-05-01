@@ -3,22 +3,24 @@
 # Distributed under terms of the BSD license.
 
 schema <- list("4"=list(seqnames="/SeqRegion", indices="/SeqRegionIndices",
-                   snpnames="/SnpIds", positions="/Positions",
-                   allele_freq_order="/SiteDesc/AlleleFreqOrder", 
-                   genotypes="/Genotypes"),
+                 snpnames="/SnpIds", positions="/Positions",
+                 allele_freq_order="/SiteDesc/AlleleFreqOrder", 
+                 genotypes="/Genotypes",
+                 allele_states="/AlleleStates"),
                "5"=list(seqnames="/Positions/Chromosomes",
-                   indices="/Positions/ChromosomeIndices",
-                   snpnames="/Positions/SnpIds",
-                   positions="/Positions/Positions",
-                   genotypes="/Genotypes",
-                   taxa_order="/Taxa/TaxaOrder",
-                   allele_freq_order="/Genotypes/_Descriptors/AlleleFreqOrder",
-                   # Note: Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6
-                   # matrix. The first column are all ref alleles, and the other
-                   # columns are all alternate alleles (0xF if not
-                   # present). This works because there can be at most 6
-                   # alleles.
-                   taxa="/Taxa"))
+                 indices="/Positions/ChromosomeIndices",
+                 snpnames="/Positions/SnpIds",
+                 positions="/Positions/Positions",
+                 genotypes="/Genotypes",
+                 taxa_order="/Taxa/TaxaOrder",
+                 allele_freq_order="/Genotypes/_Descriptors/AlleleFreqOrder",
+                 # Note: Tassel's HDF5 encodes ref/alt alleles as a ncoci x 6
+                 # matrix. The first column are all ref alleles, and the other
+                 # columns are all alternate alleles (0xF if not
+                 # present). This works because there can be at most 6
+                 # alleles.
+                 taxa="/Taxa",
+                 allele_states="/Genotypes/AlleleStates"))
 
 getLoadGenotypeFun <- function(version) {
   schm <- schema[[version]]
@@ -71,12 +73,14 @@ initTasselHDF5 <- function(file, version="5") {
   allele_mat <- h5read(file, schm$allele_freq_order)
   ref <- getRefAlleles(allele_mat)
   alt <- as(getAltAlleles(allele_mat), "IntegerList")
+  allele_states <- h5read(teo@filename, schm$allele_states)
   ranges <- setNames(GRanges(seqnames, IRanges(start=positions, width=1)),
                      snpnames)
   obj <- new("TasselHDF5", filename=file,
              #seqnames=seqnames, positions=positions,
              ranges=ranges,
              ref=ref, alt=alt,
+             allele_states=allele_states,
              samples=samples, version=version)
   return(obj)
 }
