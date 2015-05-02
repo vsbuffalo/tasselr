@@ -49,7 +49,7 @@ setMethod("alt",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@alt)
-            if (any(S4Vectors:::elementLengths(x@alt)) > 1L)
+            if (any(IRanges:::elementLengths(x@alt)) > 1L)
               stop("alt() with as_char=TRUE only works for biallelic loci; use loadBiallelicGenotypes() first.")
             alt <- as.integer(x@alt)
             x@allele_states[alt+1L]

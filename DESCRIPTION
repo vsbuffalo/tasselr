@@ -7,7 +7,6 @@ Description: A few S4 methods for loading and manipulating HDF5 files from
 Imports:
     Biobase,
     IRanges,
-    S4Vectors,
     methods,
     rhdf5,
     Rcpp,
