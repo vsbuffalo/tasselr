@@ -49,8 +49,10 @@ setMethod("alt",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@alt)
-            out <- sapply(x@alt, function(a) x@allele_states[a+1L])
-            out
+            if (any(S4Vectors:::elementLengths(x@alt)) > 1L)
+              stop("alt() with as_char=TRUE only works for biallelic loci; use loadBiallelicGenotypes() first.")
+            alt <- as.integer(x@alt)
+            x@allele_states[alt+1L]
           })
 
 #' Accessor for reference alleles from a TasselHDF5 object
@@ -64,8 +66,7 @@ setMethod("ref",
           function(x, as_char=TRUE) {
             if (!as_char)
               return(x@ref)
-            out <- sapply(x@ref, function(a) x@allele_states[a+1L])
-            return(out)
+            x@allele_states[x@ref+1L]
           })
 
 
