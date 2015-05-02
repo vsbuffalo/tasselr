@@ -70,7 +70,7 @@ initTasselHDF5 <- function(file, version="5") {
       samples <- as.character(h5read(file, schm$taxa_order))
   if (version == "4")
       samples <- names(h5read(file, schm$genotypes, count=1))
-  allele_mat <- h5read(file, schm$allele_freq_order)
+  allele_mat <- h5read(file, schm$allele_freq_order)[, 1]
   ref <- getRefAlleles(allele_mat)
   alt <- as(getAltAlleles(allele_mat), "IntegerList")
   allele_states <- h5read(teo@filename, schm$allele_states)
