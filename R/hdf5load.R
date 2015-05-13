@@ -73,7 +73,7 @@ initTasselHDF5 <- function(file, version="5") {
   allele_mat <- h5read(file, schm$allele_freq_order)
   ref <- getRefAlleles(allele_mat)
   alt <- as(getAltAlleles(allele_mat), "IntegerList")
-  allele_states <- h5read(teo@filename, schm$allele_states)
+  allele_states <- h5read(teo@filename, schm$allele_states)[, 1]
   ranges <- setNames(GRanges(seqnames, IRanges(start=positions, width=1)),
                      snpnames)
   obj <- new("TasselHDF5", filename=file,
